@@ -1,6 +1,5 @@
 """
-COSeg Training script.
-
+D2M-Net training script.
 """
 
 import os
@@ -38,7 +37,7 @@ from util.logger import get_logger
 
 from util.lr import MultiStepWithWarmup, PolyLR
 from util.common_util import load_pretrain_checkpoint, evaluate_metric
-from model.coseg import COSeg
+from model.d2m_net import D2MNet
 import wandb
 
 
@@ -49,12 +48,12 @@ def get_parser():
     parser.add_argument(
         "--config",
         type=str,
-        default="config/s3dis_COSeg_fs.yaml",
+        default="config/s3dis_D2MNet_fs.yaml",
         help="config file",
     )
     parser.add_argument(
         "opts",
-        help="see config/s3dis_COSeg_fs.yaml for all options",
+        help="see config/s3dis_D2MNet_fs.yaml for all options",
         default=None,
         nargs=argparse.REMAINDER,
     )
@@ -140,13 +139,13 @@ def main_worker(gpu, ngpus_per_node, argss):
         writer = SummaryWriter(args.save_path)
         if args.vis:
             wandb.init(
-                project="COSeg",
+                project="D2M-Net",
                 name=os.path.basename(args.save_path),
                 config=args,
             )
 
     # get model
-    model = COSeg(args)
+    model = D2MNet(args)
 
     # ====== 科学的冻结策略：只冻结 Encoder(骨干网络)，放开整个 Head ======
     for name, param in model.named_parameters():
